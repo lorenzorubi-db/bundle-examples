@@ -4,7 +4,7 @@ This example demonstrates a simple Databricks job that uses tasks values to exch
 
 * `src/`: Python source code for this project.
   * `src/pydabs_job_with_task_values/`: Shared Python code that can be used by jobs and pipelines.
-* `resources/`:  Resource configurations (jobs, pipelines, etc.)
+* `resources/`:  Resource configurations, in this case a Lakeflow Job with two tasks exchanging information.
 
 
 ## Getting started
