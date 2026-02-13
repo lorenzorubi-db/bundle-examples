@@ -1,38 +1,35 @@
-from databricks.bundles.jobs import Job, Task, NotebookTask, ForEachTask, TaskDependency
+from databricks.bundles.jobs import (
+    Job,
+    Task,
+    NotebookTask,
+    ForEachTask,
+    TaskDependency,
+    JobEnvironment,
+    Environment,
+)
 
-extract = Task(
-    task_key="extract",
-    notebook_task=NotebookTask(notebook_path="src/notebook_extract.py"),
+generate_items = Task(
+    task_key="generate_items",
+    notebook_task=NotebookTask(notebook_path="src/foreach/generate_items.ipynb"),
 )
-process_item_iteration = Task(
-    task_key="process_item_iteration",
-    notebook_task=NotebookTask(
-        notebook_path="src/notebook_process_item.py",
-        base_parameters={
-            "index": "{{input}}",
-        },
-    ),
-)
+
 process_item = Task(
     task_key="process_item",
-    depends_on=[TaskDependency(task_key="extract")],
     for_each_task=ForEachTask(
-        inputs="{{tasks.extract.values.indexes}}",
-        task=process_item_iteration,
+        inputs="{{tasks.generate_items.values.items}}",
+        task=Task(
+            task_key="process_item_iteration",
+            notebook_task=NotebookTask(
+                notebook_path="src/foreach/process_item.ipynb",
+                base_parameters={"item": "{{input}}"},
+            ),
+        ),
         concurrency=10,
     ),
+    depends_on=[TaskDependency(task_key="generate_items")],
 )
 
-for_each_example = Job(
-    name="for_each_example",
-    tasks=[
-        extract,
-        process_item,
-    ],
-    parameters=[
-        {
-            "name": "lookup_file_name",
-            "default": "/Volumes/main/for_each_example/hotchpotch/my_file.json",
-        },
-    ],
+for_each_task_example = Job(
+    name="for_each_task_example",
+    tasks=[generate_items, process_item],
 )

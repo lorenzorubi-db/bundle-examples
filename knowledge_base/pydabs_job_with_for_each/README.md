@@ -3,7 +3,8 @@
 This example demonstrates a simple Databricks job that uses a foreach task.
 
 * `src/`: Python source code for this project.
-  * `src/pydabs_job_with_for_each/`: Shared Python code that can be used by jobs and pipelines.
+    * `foreach/generate_items.ipynb`: A notebook which returns a list of items to be used for task generation.
+    * `foreach/process_item.ipynb`: A notebook which will process an item.
 * `resources/`:  Resource configurations (jobs, pipelines, etc.)
 
 
@@ -45,7 +46,7 @@ with this project. It's also possible to interact with it directly using the CLI
 
     This deploys everything that's defined for this project.
     For example, the default template would deploy a job called
-    `[dev yourname] pydabs_airflow_job` to your workspace.
+    `[dev yourname] for_each_task_example` to your workspace.
     You can find that resource by opening your workpace and clicking on **Jobs & Pipelines**.
 
 3. Similarly, to deploy a production copy, type:
