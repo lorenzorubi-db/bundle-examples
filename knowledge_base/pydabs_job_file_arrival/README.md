@@ -53,22 +53,15 @@ with this project. It's also possible to interact with it directly using the CLI
 
     This deploys everything that's defined for this project.
     For example, this project will deploy a job called
-    `[dev yourname] pydabs_job_file_arrival` to your workspace.
+    `[dev yourname] file_arrival_example` to your workspace.
     You can find that resource by opening your workspace and clicking on **Jobs & Pipelines**.
 
-3. To configure the volume location:
-   - Edit `resources/file_arrival.py` and update the `url` parameter to point to your Unity Catalog Volume:
-
-     ```python
-     url="/Volumes/your_catalog/your_schema/your_volume/"
-     ```
-
-4. Development vs. Production behavior
+3. Development vs. Production behavior
    - Dev target (mode: development): Schedules and automatic triggers are disabled by design, so the job will not auto-fire on file arrival. Use manual runs to test the logic. 
      You can also manually run it with:
 
      ```
-     $ databricks bundle run pydabs_job_file_arrival
+     $ databricks bundle run file_arrival_example
      ```
    - Prod target (mode: production): Automatic triggers are active. Uploading a file to the configured Unity Catalog Volume path will trigger the job run when the trigger evaluates.
    

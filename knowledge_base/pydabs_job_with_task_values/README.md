@@ -45,7 +45,7 @@ with this project. It's also possible to interact with it directly using the CLI
 
     This deploys everything that's defined for this project.
     For example, the default template would deploy a job called
-    `[dev yourname] pydabs_airflow_job` to your workspace.
+    `[dev yourname] xcom_to_task_values_example` to your workspace.
     You can find that resource by opening your workpace and clicking on **Jobs & Pipelines**.
 
 3. Similarly, to deploy a production copy, type:
