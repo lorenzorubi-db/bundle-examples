@@ -6,13 +6,13 @@ The Lakeflow Job consists of following tasks:
 1. Checks data quality and calculates bad records
 2. Evaluates if bad records exceed a threshold (100 records)
 3. Routes to different processing paths based on the condition:
-   - If bad records > 100: runs `handle_bad_data` task
-   - If bad records ≤ 100: runs `continue_pipeline` task
+   - If bad records > 100: runs `fix_path` task
+   - If bad records ≤ 100: runs `skip_path` task
 
 * `src/`: Notebook source code for this project.
   * `src/check_quality.ipynb`: Checks data quality and outputs bad record count
-  * `src/process_bad_data.ipynb`: Handles cases with high bad record count
-  * `src/process_good_data.ipynb`: Continues normal pipeline for good data
+  * `src/fix_path.ipynb`: Handles cases with high bad record count
+  * `src/skip_path.ipynb`: Continues normal pipeline for good data
 * `resources/`:  Resource configurations (jobs, pipelines, etc.)
   * `resources/conditional_execution.py`: PyDABs job definition with conditional tasks
 
@@ -55,10 +55,10 @@ with this project. It's also possible to interact with it directly using the CLI
 
     This deploys everything that's defined for this project.
     For example, this project will deploy a job called
-    `[dev yourname] pydabs_job_conditional_execution` to your workspace.
+    `[dev yourname] conditional_execution_example` to your workspace.
     You can find that resource by opening your workspace and clicking on **Jobs & Pipelines**.
 
 3. To run the job, use the "run" command:
    ```
-   $ databricks bundle run pydabs_job_conditional_execution
+   $ databricks bundle run conditional_execution_example
    ```

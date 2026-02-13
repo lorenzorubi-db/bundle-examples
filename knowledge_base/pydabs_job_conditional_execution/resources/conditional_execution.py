@@ -1,36 +1,43 @@
 from databricks.bundles.jobs import (
-    ConditionTask,
     Job,
-    NotebookTask,
     Task,
+    NotebookTask,
+    ConditionTask,
+    ConditionTaskOp,
     TaskDependency,
 )
 
-pydabs_job_conditional_execution = Job(
-    name="pydabs_job_conditional_execution",
-    tasks=[
-        Task(
-            task_key="check_data_quality",
-            notebook_task=NotebookTask(notebook_path="src/check_quality.ipynb"),
-        ),
-        Task(
-            task_key="evaluate_quality",
-            condition_task=ConditionTask(
-                left="{{tasks.check_data_quality.values.bad_records}}",
-                op="GREATER_THAN",
-                right="100",
-            ),
-            depends_on=[TaskDependency(task_key="check_data_quality")],
-        ),
-        Task(
-            task_key="handle_bad_data",
-            notebook_task=NotebookTask(notebook_path="src/process_bad_data.ipynb"),
-            depends_on=[TaskDependency(task_key="evaluate_quality", outcome="true")],
-        ),
-        Task(
-            task_key="continue_pipeline",
-            notebook_task=NotebookTask(notebook_path="src/process_good_data.ipynb"),
-            depends_on=[TaskDependency(task_key="evaluate_quality", outcome="false")],
-        ),
-    ],
+# 1) Producer task: runs a notebook and emits a task value
+check_quality = Task(
+    task_key="check_quality",
+    notebook_task=NotebookTask(notebook_path="src/branch/check_quality.ipynb"),
+)
+
+# 2) Branch task: evaluates an expression using an upstream task value
+branch = Task(
+    task_key="branch",
+    condition_task=ConditionTask(
+        left="{{tasks.check_quality.values.bad_records}}",
+        op=ConditionTaskOp.GREATER_THAN,
+        right="100",
+    ),
+    depends_on=[TaskDependency(task_key="check_quality")],
+)
+
+# 3) Downstream tasks: gated on the condition outcome
+fix_path = Task(
+    task_key="fix_path",
+    notebook_task=NotebookTask(notebook_path="src/branch/fix_path.ipynb"),
+    depends_on=[TaskDependency(task_key="branch", outcome="true")],
+)
+
+skip_path = Task(
+    task_key="skip_path",
+    notebook_task=NotebookTask(notebook_path="src/branch/skip_path.ipynb"),
+    depends_on=[TaskDependency(task_key="branch", outcome="false")],
+)
+
+job = Job(
+    name="conditional_execution_example",
+    tasks=[check_quality, branch, fix_path, skip_path],
 )
