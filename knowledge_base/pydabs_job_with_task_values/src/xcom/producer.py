@@ -1,3 +1,4 @@
+# Databricks notebook source
 from databricks.sdk.runtime import dbutils
 
 value = 42
